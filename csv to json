@@ -1,0 +1,50 @@
+const mongo = require('mongoose')
+const schema = mongo.Schema({
+    question_tag:Array,
+    answer_tag:Array
+})
+const fs = require("fs");
+const csvFilePath =__dirname+"/test.csv";
+const csv = require("csvtojson");
+csv().fromFile(csvFilePath).then((val)=>{
+    console.log(val[0])
+    val.map((v)=>{
+        insertData(v);
+    })
+    
+})
+
+const insertData = async(value)=>{
+    await mongo().then(async (m)=>{
+        try{
+            
+            await new schema(value).save()
+        }
+        catch{
+            console.log("limit issues")
+        }
+        finally
+        {
+            m.connection.close()
+        }
+    })
+}
+
+let jsonVal;
+// fs.readFile(__dirname + "/test.csv", function (err, data) {
+//   if (err) throw err;
+//   const parse = new x.Parser();
+//   parse
+//     .parseStringPromise(data)
+//     .then(function (val) {
+//       val.root.row.map((value) => {
+//         //console.log(value)
+//         insertData(value);
+//         jsonVal = value;
+//       });
+//     })
+//     .catch((err) => console.log(err));
+// });
+
+
+
